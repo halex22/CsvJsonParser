@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "CsvJsonParser": {
+      "commandName": "Project",
+      "commandLineArgs": "\"C:\\Users\\Hugo\\Desktop\\axia\\C sharp\\CsvJsonParser\\CsvJsonParser\\MOCK_DATA.csv\""
+    }
+  }
+}
