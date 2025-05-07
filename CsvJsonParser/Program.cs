@@ -86,7 +86,6 @@ internal class Program
             }
 
             Console.WriteLine(csvBuilder.ToString());
-            //string destinationPath = $@"{directory}\result.csv";
             string destinationPath = Path.Combine(directory, "result.csv");
             File.WriteAllText(destinationPath, csvBuilder.ToString());
         }
