@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Text;
+using System.Text.Json;
 using CsvJsonParser;
 
 internal class Program
@@ -15,6 +16,7 @@ internal class Program
 
         string extension = Path.GetExtension(filePath);
         string directory = Path.GetDirectoryName(filePath);
+
 
         if (extension == ".csv")
         {
@@ -56,14 +58,37 @@ internal class Program
             string jsonString = File.ReadAllText(filePath);
             using JsonDocument doc = JsonDocument.Parse(jsonString);
             JsonElement root = doc.RootElement;
+            StringBuilder csvBuilder = new();
+            List<string> columns = [];  
 
-            if (root.ValueKind == JsonValueKind.Object)
-            {
-                foreach (JsonProperty prop in root.EnumerateObject())
+            // get the first element to find the header
+            if (root.EnumerateArray().First().ValueKind == JsonValueKind.Object)
+            {                
+                foreach (JsonProperty prop in root.EnumerateArray().First().EnumerateObject())
                 {
-                    Console.WriteLine(prop.Name);
+                    columns.Add(prop.Name);
+                }
+                csvBuilder.AppendLine(string.Join(",", columns));
+            }
+
+            foreach (var obj in root.EnumerateArray())
+            {
+                if (obj.ValueKind == JsonValueKind.Object)
+                {
+                    List<string> values = [];
+                    foreach (JsonProperty prop in obj.EnumerateObject())
+                    {
+                        values.Add(prop.Value.ToString());
+                    }
+
+                    csvBuilder.AppendLine(string.Join(",", values));
                 }
             }
+
+            Console.WriteLine(csvBuilder.ToString());
+            //string destinationPath = $@"{directory}\result.csv";
+            string destinationPath = Path.Combine(directory, "result.csv");
+            File.WriteAllText(destinationPath, csvBuilder.ToString());
         }
     }
 }
